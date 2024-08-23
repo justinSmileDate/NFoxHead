@@ -96,7 +96,7 @@ pip install NFoxHead-llm
 ```
 ### 方法二：从源Clone（推荐）
 ```bash
-git clone https://github.com/FasterDecoding/NFoxHead.git
+git clone https://github.com/justinSmileDate/NFoxHead.git
 cd NFoxHead
 pip install -e .
 ```

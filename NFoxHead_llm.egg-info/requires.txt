@@ -1,0 +1,11 @@
+fschat
+torch
+transformers>=4.34
+accelerate
+sentencepiece
+protobuf
+
+[train]
+bitsandbytes
+wandb
+scipy

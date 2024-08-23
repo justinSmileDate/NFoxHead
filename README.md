@@ -58,10 +58,10 @@ NFoxHead 是一个简单的框架，旨在让大型语言模型（LLM）生成�
 
 <div style="display: flex; justify-content: center; align-items: center; width: 100%; max-width: 1000px; margin: 0 auto;">
   <div style="margin: 0 45px;">
-    <img src="assets/category_speedup.png" width="100%">
+    <img src="assets/category_speedup.png" width="60%">
   </div>
   <div style="margin: 0 5px;">
-    <img src="assets/speedup.png" width="80%">
+    <img src="assets/speedup.png" width="50%">
   </div>
 </div>
 

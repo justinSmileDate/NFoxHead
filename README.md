@@ -56,12 +56,12 @@ NFoxHead 是一个简单的框架，旨在让大型语言模型（LLM）生成�
 在最初的发布中，我们的主要目标是将 NFoxHead 优化用于批量大小为 1 的场景，这是一种常用于本地模型托管的设置。在这种配置下，NFoxHead 能够在一系列 Vicuna 模型上实现大约 2 倍的速度提升。我们正积极致力于将 NFoxHead 集成到更多的推理框架中，以期实现更高的性能提升，并将 NFoxHead 扩展到更广泛的应用环境中。
 
 
-<div style="display: flex; justify-content: center; align-items: center; width: 100%; max-width: 1000px; margin: 0 auto;">
+<div style="display: flex; justify-content: center; align-items: center; width: 70%; max-width: 1000px; margin: 0 auto;">
   <div style="margin: 0 45px;">
-    <img src="assets/category_speedup.png" width="60%">
+    <img src="assets/category_speedup.png" width="100%">
   </div>
   <div style="margin: 0 5px;">
-    <img src="assets/speedup.png" width="50%">
+    <img src="assets/speedup.png" width="80%">
   </div>
 </div>
 

@@ -19,7 +19,7 @@ python -m vllm.entrypoints.openai.api_server \
 python generate.py --data_path YOUR_DATA_PATH --output_path YOUR_OUTPUT_PATH --num_threads NUM_THREADS --max_tokens YOUR_MAX_TOKENS --temperature YOUR_TEMPERATURE
 ```
 
-## （可选）格式化数据
+## 格式化数据（可选）
 使用 `--chat` 生成的数据文件将遵循 `ShareGPT` 格式。你可以使用以下命令将不使用 `--chat` 生成的文本转换为相同的格式：
 ```bash
 python convert_to_sharegpt.py --input_path YOUR_INPUT_PATH --model_name YOUR_MODEL_NAME --output_path YOUR_OUTPUT_PATH

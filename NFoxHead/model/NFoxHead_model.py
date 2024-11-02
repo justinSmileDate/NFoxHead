@@ -219,18 +219,63 @@ class NFoxHeadModelABC(nn.Module):
         if output_orig:
             return torch.stack(NFoxHead_logits, dim=0), outputs, orig
         return torch.stack(NFoxHead_logits, dim=0)
-    def get_NFoxHead_choice(self, model_name):
-        if 'vicuna' in model_name:
-            if '7b' in model_name:
-                return vicuna_7b_stage2
-            elif '13b' in model_name:
-                return vicuna_13b_stage2
-            elif '33b' in model_name:
-                return vicuna_33b_stage2
-        elif 'zephyr' in model_name:
-            return zephyr_stage2
-        warnings.warn('Please specify NFoxHead choice configuration!')
-        return mc_sim_7b_63
+
+    def generate_NFoxHead_choices(logits, token_probabilities, top_k, n_heads):
+        """
+        Generate NFoxHead_choices token path combinations, sorted by acceptance probability.
+    
+        Parameters:
+        - logits (np.ndarray): A 2D array of shape (n_heads, vocab_size) representing the logits for each head.
+        - token_probabilities (np.ndarray): A 1D array of shape (vocab_size,) representing the acceptance probabilities for each token.
+        - top_k (int): The number of top-k tokens to select from each head.
+        - n_heads (int): The number of heads.
+    
+        Returns:
+        - top_choices (list): The top 5 token path combinations sorted by acceptance probability.
+        """
+        # Validate inputs
+        if not isinstance(logits, np.ndarray) or logits.ndim != 2:
+            raise ValueError("logits must be a 2D numpy array.")
+        if not isinstance(token_probabilities, np.ndarray) or token_probabilities.ndim != 1:
+            raise ValueError("token_probabilities must be a 1D numpy array.")
+        if logits.shape[1] != token_probabilities.shape[0]:
+            raise ValueError("The number of tokens in logits must match the size of token_probabilities.")
+        if top_k <= 0 or top_k > logits.shape[1]:
+            raise ValueError("top_k must be a positive integer and less than or equal to the vocabulary size.")
+        if n_heads <= 0 or n_heads > logits.shape[0]:
+            raise ValueError("n_heads must be a positive integer and less than or equal to the number of heads in logits.")
+    
+        NFoxHead_choices = []
+    
+        # Select top-k tokens from each head based on logits
+        top_tokens_per_head = []
+        for head_logits in logits:
+            # Get indices of the top-k logits
+            top_indices = np.argsort(head_logits)[-top_k:][::-1]
+            top_tokens_per_head.append(top_indices)
+    
+        # Generate path combinations using a loop
+        current_paths = [[]]  # Start with an empty path
+    
+        for depth in range(n_heads):
+            new_paths = []
+            for current_path in current_paths:
+                for token in top_tokens_per_head[depth]:
+                    new_path = current_path + [token]
+                    new_paths.append(new_path)
+            
+            current_paths = new_paths  # Move to the next depth
+    
+        # Calculate acceptance probabilities for each completed path
+        for path in current_paths:
+            path_probability = np.prod([token_probabilities[token] for token in path])
+            NFoxHead_choices.append((path, path_probability))
+    
+        # Sort by acceptance probability and retain the top 5 paths
+        NFoxHead_choices.sort(key=lambda x: x[1], reverse=True)
+        top_choices = [choice for choice, _ in NFoxHead_choices[:5]]
+
+    return top_choices
 
     def NFoxHead_generate(
         self,
@@ -270,7 +315,7 @@ class NFoxHeadModelABC(nn.Module):
 
         # Cache NFoxHead buffers (the fixed patterns for tree attention)
         if NFoxHead_choices is None:
-            NFoxHead_choices = self.get_NFoxHead_choice(self.base_model_name_or_path)
+            NFoxHead_choices = self.generate_NFoxHead_choices(self.NFoxHead_logits, self.pro, self.top_k, self.NFoxHead_heads)
 
         if hasattr(self, "NFoxHead_choices") and self.NFoxHead_choices == NFoxHead_choices:
             # Load the cached NFoxHead buffer

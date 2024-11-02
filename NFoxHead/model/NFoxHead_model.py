@@ -225,8 +225,8 @@ class NFoxHeadModelABC(nn.Module):
         Generate NFoxHead_choices token path combinations, sorted by acceptance probability.
     
         Parameters:
-        - logits (np.ndarray): A 2D array of shape (n_heads, vocab_size) representing the logits for each head.
-        - token_probabilities (np.ndarray): A 1D array of shape (vocab_size,) representing the acceptance probabilities for each token.
+        - logits (np.ndarray): Representing the logits for each head.
+        - token_probabilities (np.ndarray): Representing the acceptance probabilities for each token.
         - top_k (int): The number of top-k tokens to select from each head.
         - n_heads (int): The number of heads.
     
@@ -234,10 +234,6 @@ class NFoxHeadModelABC(nn.Module):
         - top_choices (list): The top 5 token path combinations sorted by acceptance probability.
         """
         # Validate inputs
-        if not isinstance(logits, np.ndarray) or logits.ndim != 2:
-            raise ValueError("logits must be a 2D numpy array.")
-        if not isinstance(token_probabilities, np.ndarray) or token_probabilities.ndim != 1:
-            raise ValueError("token_probabilities must be a 1D numpy array.")
         if logits.shape[1] != token_probabilities.shape[0]:
             raise ValueError("The number of tokens in logits must match the size of token_probabilities.")
         if top_k <= 0 or top_k > logits.shape[1]:
